@@ -1,0 +1,16 @@
+# Terraform local state
+*.tfstate
+*.tfstate.backup
+.terraform/
+
+# Terraform for Project 2
+project2-serverless-api/terraform/.terraform/
+project2-serverless-api/terraform/terraform.tfvars
+
+# Node modules (if Lambda uses Node.js dependencies)
+project2-serverless-api/lambda-code/node_modules/
+
+# VS Code / system files
+.vscode/
+.DS_Store
+Thumbs.db
