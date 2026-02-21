@@ -1,16 +1,29 @@
-# Terraform local state
+# =========================
+# Terraform
+# =========================
+
+# Local state files
 *.tfstate
-*.tfstate.backup
+*.tfstate.*
+crash.log
+
+# Terraform directory
 .terraform/
 
-# Terraform for Project 2
-project2-serverless-api/terraform/.terraform/
-project2-serverless-api/terraform/terraform.tfvars
+# Terraform CLI config files
+.terraformrc
+terraform.rc
 
-# Node modules (if Lambda uses Node.js dependencies)
-project2-serverless-api/lambda-code/node_modules/
+# =========================
+# OS Files
+# =========================
 
-# VS Code / system files
-.vscode/
 .DS_Store
 Thumbs.db
+
+# =========================
+# IDE Files
+# =========================
+
+.vscode/
+.idea/
