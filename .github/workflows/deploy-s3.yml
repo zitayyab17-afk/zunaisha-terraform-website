@@ -1,6 +1,5 @@
 name: Terraform + Static Site Deployment
 
-# Trigger workflow on push to main and test branch
 on:
   push:
     branches:
@@ -9,15 +8,14 @@ on:
 
 jobs:
   deploy:
-    name: Deploy Infrastructure & Website
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout repository
+      # 1️⃣ Checkout repo
       - name: Checkout Repo
         uses: actions/checkout@v3
 
-      # 2️⃣ Configure AWS Credentials
+      # 2️⃣ Configure AWS credentials
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -31,17 +29,21 @@ jobs:
         with:
           terraform_version: 1.6.0
 
-      # 4️⃣ Terraform Init
+      # 4️⃣ Debug: List Terraform folder
+      - name: List Terraform folder
+        run: ls Terraform
+
+      # 5️⃣ Terraform Init
       - name: Terraform Init
         run: terraform init
         working-directory: Terraform
 
-      # 5️⃣ Terraform Plan
+      # 6️⃣ Terraform Plan
       - name: Terraform Plan
         run: terraform plan
         working-directory: Terraform
 
-      # 6️⃣ Terraform Apply
+      # 7️⃣ Terraform Apply
       - name: Terraform Apply
         run: terraform apply -auto-approve
         working-directory: Terraform
@@ -49,10 +51,10 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      # 7️⃣ Sync Static Website to S3
+      # 8️⃣ Sync S3 Bucket
       - name: Sync S3 Bucket
         run: aws s3 sync test-site/ s3://zunaisha-terraform-site-001 --delete
 
-      # 8️⃣ Invalidate CloudFront Cache
+      # 9️⃣ Invalidate CloudFront
       - name: Invalidate CloudFront
         run: aws cloudfront create-invalidation --distribution-id E198TPYZOCZ8GM --paths "/*"
