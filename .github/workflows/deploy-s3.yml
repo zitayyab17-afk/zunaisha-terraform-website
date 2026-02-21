@@ -1,6 +1,6 @@
 name: Terraform + Static Site Deployment
 
-# Trigger workflow on push to main branch
+# Trigger workflow on push to main and test branch
 on:
   push:
     branches:
@@ -34,14 +34,17 @@ jobs:
       # 4️⃣ Terraform Init
       - name: Terraform Init
         run: terraform init
+        working-directory: Terraform
 
       # 5️⃣ Terraform Plan
       - name: Terraform Plan
         run: terraform plan
+        working-directory: Terraform
 
       # 6️⃣ Terraform Apply
       - name: Terraform Apply
         run: terraform apply -auto-approve
+        working-directory: Terraform
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
