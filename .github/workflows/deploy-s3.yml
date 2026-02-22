@@ -24,29 +24,29 @@ jobs:
           aws-region: eu-west-2
 
       # 3️⃣ Setup Terraform
-      - name: Setup Terraform
+      - name: Setup terraform
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.6.0
 
       # 4️⃣ Debug: List Terraform folder
       - name: List Terraform folder
-        run: ls Terraform
+        run: ls terraform
 
       # 5️⃣ Terraform Init
       - name: Terraform Init
         run: terraform init
-        working-directory: Terraform
+        working-directory: terraform
 
       # 6️⃣ Terraform Plan
       - name: Terraform Plan
         run: terraform plan
-        working-directory: Terraform
+        working-directory: terraform
 
       # 7️⃣ Terraform Apply
       - name: Terraform Apply
         run: terraform apply -auto-approve
-        working-directory: Terraform
+        working-directory: terraform
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
