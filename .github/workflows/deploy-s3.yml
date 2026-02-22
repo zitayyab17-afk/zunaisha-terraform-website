@@ -1,29 +1,60 @@
-name: Deploy Static Site to S3
+name: Terraform + Static Site Deployment
 
 on:
   push:
     branches:
-      - main  
+      - main
+      - terraform-ci
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repo
-      uses: actions/checkout@v3
+      # 1️⃣ Checkout repo
+      - name: Checkout Repo
+        uses: actions/checkout@v3
 
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v2
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: eu-west-2
+      # 2️⃣ Configure AWS credentials
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-2
 
-    - name: Sync S3 bucket
-      run: |
-        aws s3 sync test-site/ s3://zunaisha-terraform-site-001 --delete
+      # 3️⃣ Setup Terraform
+      - name: Setup terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.6.0
 
-    - name: Invalidate CloudFront
-      run: |
-        aws cloudfront create-invalidation --distribution-id E198TPYZOCZ8GM --paths "/*"
+      # 4️⃣ Debug: List Terraform folder
+      - name: List Terraform folder
+        run: ls terraform
+
+      # 5️⃣ Terraform Init
+      - name: Terraform Init
+        run: terraform init
+        working-directory: terraform
+
+      # 6️⃣ Terraform Plan
+      - name: Terraform Plan
+        run: terraform plan
+        working-directory: terraform
+
+      # 7️⃣ Terraform Apply
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+        working-directory: terraform
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      # 8️⃣ Sync S3 Bucket
+      - name: Sync S3 Bucket
+        run: aws s3 sync test-site/ s3://zunaisha-terraform-site-001 --delete
+
+      # 9️⃣ Invalidate CloudFront
+      - name: Invalidate CloudFront
+        run: aws cloudfront create-invalidation --distribution-id E198TPYZOCZ8GM --paths "/*"
